@@ -16,7 +16,7 @@ public class Checklist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "checklist_id")
-    private Long id;
+    private Long checklistId;
 
     @Column(nullable = false, name="task")
     private String task;

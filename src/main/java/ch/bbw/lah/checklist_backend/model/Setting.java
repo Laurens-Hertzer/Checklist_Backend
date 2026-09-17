@@ -15,7 +15,7 @@ public class Setting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "setting_id")
-    private Long id;
+    private Long settingId;
 
     @Column(nullable = false, name = "train_starting")
     private String trainStarting;
