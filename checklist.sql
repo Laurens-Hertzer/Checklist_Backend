@@ -1,5 +1,5 @@
-CREATE DATABASE checklist if not exists;
-USE checklist;
+CREATE DATABASE IF NOT EXISTS checklistdb;
+USE checklistdb;
 
 CREATE TABLE IF NOT EXISTS checklist (
     checklist_id INT AUTO_INCREMENT PRIMARY KEY,
