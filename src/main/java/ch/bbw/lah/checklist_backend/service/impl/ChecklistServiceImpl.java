@@ -11,30 +11,30 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ChecklistServiceImpl implements ChecklistService {
-    private ChecklistRepository checklistRepository;
+    private final ChecklistRepository checklistRepository;
 
     @Override
     public Checklist createChecklist(Checklist checklist) {
-        return null;
+        return checklistRepository.save(checklist);
     }
 
     @Override
     public Checklist getChecklistById(Long checklistId) {
-        return checklistRepository.findByChecklistId(checklistId);
+        return (Checklist) checklistRepository.findByChecklistId(checklistId);
     }
 
     @Override
     public List<Checklist> getAllChecklists() {
-        return List.of();
+        return checklistRepository.findAll();
     }
 
     @Override
     public Checklist updateChecklist(Checklist checklist) {
-        return null;
+        return checklistRepository.save(checklist);
     }
 
     @Override
-    public boolean deleteChecklist(Long checklistId) {
-        return false;
+    public void deleteChecklist(Long checklistId) {
+        checklistRepository.deleteById(checklistId);
     }
 }
