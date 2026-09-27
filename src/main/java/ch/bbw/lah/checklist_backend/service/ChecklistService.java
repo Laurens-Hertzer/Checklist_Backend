@@ -14,5 +14,5 @@ public interface ChecklistService {
 
     Checklist updateChecklist(Checklist checklist);
 
-    boolean deleteChecklist(Long checklistId);
+    void deleteChecklist(Long checklistId);
 }
