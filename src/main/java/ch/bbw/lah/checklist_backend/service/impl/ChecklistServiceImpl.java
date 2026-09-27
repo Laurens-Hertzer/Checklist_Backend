@@ -20,7 +20,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Override
     public Checklist getChecklistById(Long checklistId) {
-        return checklistRepository.findByChecklistId(checklistId);
+        return (Checklist) checklistRepository.findByChecklistId(checklistId);
     }
 
     @Override
