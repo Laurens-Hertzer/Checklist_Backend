@@ -20,7 +20,8 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Override
     public Checklist getChecklistById(Long checklistId) {
-        return (Checklist) checklistRepository.findByChecklistId(checklistId);
+        return checklistRepository.findById(checklistId)
+                .orElseThrow(() -> new RuntimeException("Checklist mit ID " + checklistId + " nicht gefunden!"));
     }
 
     @Override
