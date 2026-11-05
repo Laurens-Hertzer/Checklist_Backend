@@ -56,26 +56,15 @@ public class ChecklistController {
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
     @PutMapping("{id}")
     public ResponseEntity<String> updateChecklist(@PathVariable("id") Long checklistId, @RequestBody Checklist checklist) {
-        try {
-            checklist.setChecklistId(checklistId);
-            checklistService.updateChecklist(checklist);
-            return ResponseEntity.ok("Checklist erfolgreich updated");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Checklist mit ID " + checklistId + "konnte nicht geupdated werden.");
-        }
+        checklist.setChecklistId(checklistId);
+        checklistService.updateChecklist(checklist);
+        return ResponseEntity.ok("Checklist erfolgreich updated");
     }
 
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteChecklist(@PathVariable("id") Long checklistId) {
-
-        try {
-            checklistService.deleteChecklist(checklistId);
-            return ResponseEntity.ok("Checklist erfolgreich gelöscht.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Checklist mit ID " + checklistId + " nicht gefunden.");
-        }
+        checklistService.deleteChecklist(checklistId);
+        return ResponseEntity.ok("Checklist erfolgreich gelöscht.");
     }
 }

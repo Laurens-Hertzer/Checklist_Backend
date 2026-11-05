@@ -33,7 +33,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Override
     public Checklist getChecklistById(Long checklistId) {
         return checklistRepository.findById(checklistId)
-                .orElseThrow(() -> new RuntimeException("Checklist mit ID " + checklistId + " nicht gefunden!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Checklist not found"));
     }
 
     @Override
@@ -135,13 +135,23 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Override
     public Checklist updateChecklist(Checklist checklist) {
         validateDeleteAfterDays(checklist);
-        Checklist savedChecklist = checklistRepository.save(checklist);
+        Checklist existingChecklist = checklistRepository.findById(checklist.getChecklistId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Checklist not found"));
+        existingChecklist.setTask(checklist.getTask());
+        existingChecklist.setCompleted(checklist.isCompleted());
+        existingChecklist.setDueDate(checklist.getDueDate());
+        existingChecklist.setDeleteAfterDays(checklist.getDeleteAfterDays());
+        existingChecklist.setRepeatDays(checklist.getRepeatDays());
+        Checklist savedChecklist = checklistRepository.save(existingChecklist);
         createRecurringCopyIfScheduled(savedChecklist, LocalDate.now());
         return savedChecklist;
     }
 
     @Override
     public void deleteChecklist(Long checklistId) {
+        if (!checklistRepository.existsById(checklistId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Checklist not found");
+        }
         checklistRepository.deleteById(checklistId);
     }
 }
