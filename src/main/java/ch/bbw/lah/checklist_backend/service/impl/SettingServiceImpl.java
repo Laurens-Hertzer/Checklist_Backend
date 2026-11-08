@@ -4,7 +4,9 @@ import ch.bbw.lah.checklist_backend.model.Setting;
 import ch.bbw.lah.checklist_backend.repository.SettingRepository;
 import ch.bbw.lah.checklist_backend.service.SettingService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -21,7 +23,8 @@ public class SettingServiceImpl implements SettingService {
     @Override
     public Setting getSettingById(Long settingId) {
         return settingRepository.findById(settingId)
-                .orElseThrow(() -> new RuntimeException("Setting mit ID " + settingId + " nicht gefunden!"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Setting mit ID " + settingId + " nicht gefunden!"));
     }
 
     @Override
