@@ -6,6 +6,10 @@ This repository belongs with its counterpart [Checklist_Frontend](https://github
 
 Tomorrow's forecast for Dietlikon is available at `GET /api/weather`. The previous forecast path, `GET /api/weather/forecast`, remains available as an alias. The response includes morning (09:00), midday (14:00), evening (19:00), and night (23:00), with temperature, a German weather description and WMO code, precipitation probability, and wind speed. The location and coordinates can be changed with `WEATHER_LOCATION`, `WEATHER_LATITUDE`, and `WEATHER_LONGITUDE`. Forecast data is provided by [Open-Meteo](https://open-meteo.com/); attribution is required when displaying or redistributing it.
 
+## API documentation
+
+When the backend is running, open Swagger UI at `http://localhost:8080/swagger-ui/index.html`. The OpenAPI specification is available at `http://localhost:8080/v3/api-docs`.
+
 ## Technology
 
 This backend is written in Java with Springboot.
