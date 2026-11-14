@@ -4,21 +4,27 @@ This API backend gives out saved checklist data with data from my train and weat
 
 This repository belongs with its counterpart [Checklist_Frontend](https://github.com/Laurens-Hertzer/Checklist_Frontend) to the Morning Checklist System.
 
-Tomorrow's forecast for Dietlikon is available at `GET /api/weather`. The previous forecast path, `GET /api/weather/forecast`, remains available as an alias. The response includes morning (09:00), midday (14:00), evening (19:00), and night (23:00), with temperature, a German weather description and WMO code, precipitation probability, and wind speed. The location and coordinates can be changed with `WEATHER_LOCATION`, `WEATHER_LATITUDE`, and `WEATHER_LONGITUDE`. Forecast data is provided by [Open-Meteo](https://open-meteo.com/); attribution is required when displaying or redistributing it.
+## Documentation
 
-## API documentation
+### API Documentation
 
 When the backend is running, open Swagger UI at `http://localhost:8080/swagger-ui/index.html`. The OpenAPI specification is available at `http://localhost:8080/v3/api-docs`.
+
+
+### Tests Documentation
+
+The Phase 4 test overview is in [`docs/phase4-testing.md`](docs/phase4-testing.md).
+Run automated tests with `.\mvnw.cmd test`.
+
+## Postman negative tests
+
+Import `postman/Checklist_Backend.postman_collection.json` for successful requests and `postman/Checklist Backend Bad Tests.postman_collection.json` for negative requests. Both collections use `{{baseUrl}}`, defaulting to `http://localhost:8080`. Run the successful collection in order because later requests use IDs saved by the create requests. External train and weather requests require their respective APIs.
 
 ## Technology
 
 This backend is written in Java with Springboot.
 
-A PostgreSQL Database is used for longterm data storage for this program. The Docker Compose for the Database is also in this repository.
-
-## Tests
-
-WIP
+A MariaDB Database is used for longterm data storage for this program. The Docker Compose for the Database is also in this repository.
 
 ## Deployment
 
