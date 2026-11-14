@@ -1,7 +1,6 @@
 package ch.bbw.lah.checklist_backend.controller;
 
 import ch.bbw.lah.checklist_backend.model.Setting;
-import ch.bbw.lah.checklist_backend.repository.SettingRepository;
 import ch.bbw.lah.checklist_backend.service.SettingService;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,11 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +23,7 @@ import java.util.List;
 @RequestMapping("api/setting")
 @Tag(name = "Settings", description = "Manage journey and weather location settings.")
 public class SettingController {
-    private SettingService settingService;
-    private static final Logger logger = LoggerFactory.getLogger(SettingController.class);
+    private final SettingService settingService;
 
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
     @GetMapping("{id}")
@@ -40,6 +35,8 @@ public class SettingController {
             @ApiResponse(responseCode = "400", description = "Setting ID is not a number",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Setting not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<Setting> getSettingById(
@@ -55,7 +52,9 @@ public class SettingController {
             @ApiResponse(responseCode = "200", description = "Settings found",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = Setting.class)))),
-            @ApiResponse(responseCode = "404", description = "No settings exist", content = @Content)
+            @ApiResponse(responseCode = "404", description = "No settings exist", content = @Content),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
+                    content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<Setting>> getAllSettings () {
         List<Setting> settings = settingService.getAllSettings();
@@ -70,10 +69,12 @@ public class SettingController {
             @ApiResponse(responseCode = "201", description = "Setting created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Setting.class))),
-            @ApiResponse(responseCode = "400", description = "Request body is missing or malformed",
+            @ApiResponse(responseCode = "400", description = "Required setting fields are missing, blank, or malformed",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity <Setting> createSetting (@Valid @RequestBody Setting setting) {
+    public ResponseEntity<Setting> createSetting(@Valid @RequestBody Setting setting) {
 
         Setting savedSetting = settingService.createSetting(setting);
 
@@ -90,39 +91,34 @@ public class SettingController {
                             schema = @Schema(type = "string", example = "Setting erfolgreich updated"))),
             @ApiResponse(responseCode = "400", description = "Setting ID or request body is invalid",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "An exception occurred while updating the setting",
-                    content = @Content(mediaType = "text/plain",
-                            schema = @Schema(type = "string",
-                                    example = "Setting mit ID 1konnte nicht geupdated werden.")))
+            @ApiResponse(responseCode = "404", description = "Setting not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
+                    content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> updateSetting(@PathVariable("id") Long settingId, @RequestBody Setting setting) {
-        try {
-            setting.setSettingId(settingId);
-            settingService.updateSetting(setting);
-            return ResponseEntity.ok("Setting erfolgreich updated");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Setting mit ID " + settingId + "konnte nicht geupdated werden.");
-        }
+    public ResponseEntity<String> updateSetting(
+            @PathVariable("id") Long settingId,
+            @Valid @RequestBody Setting setting) {
+        setting.setSettingId(settingId);
+        settingService.updateSetting(setting);
+        return ResponseEntity.ok("Setting erfolgreich updated");
     }
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
     @DeleteMapping("{id}")
     @Operation(summary = "Delete a setting")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Deletion request completed; a missing ID is ignored",
+            @ApiResponse(responseCode = "200", description = "Setting deleted",
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(type = "string", example = "Setting erfolgreich gelöscht."))),
             @ApiResponse(responseCode = "400", description = "Setting ID is not a number",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Setting not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<String> deleteSetting(@PathVariable("id") Long settingId) {
-
-        try {
-            settingService.deleteSetting(settingId);
-            return ResponseEntity.ok("Setting erfolgreich gelöscht.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Setting mit ID " + settingId + " nicht gefunden.");
-        }
+        settingService.deleteSetting(settingId);
+        return ResponseEntity.ok("Setting erfolgreich gelöscht.");
     }
 }

@@ -36,6 +36,8 @@ public class ChecklistController {
             @ApiResponse(responseCode = "400", description = "Checklist ID is not a number",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Checklist not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<Checklist> getChecklistById(
@@ -48,9 +50,13 @@ public class ChecklistController {
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
     @GetMapping
     @Operation(summary = "Get all checklists")
-    @ApiResponse(responseCode = "200", description = "List of checklists; an empty list is returned when none exist",
-            content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Checklist.class))))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of checklists; an empty list is returned when none exist",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Checklist.class)))),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
+                    content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<List<Checklist>> getAllChecklists() {
         List<Checklist> checklists = checklistService.getAllChecklists();
         return ResponseEntity.ok(checklists);
@@ -65,7 +71,9 @@ public class ChecklistController {
                             array = @ArraySchema(schema = @Schema(implementation = Checklist.class)))),
             @ApiResponse(responseCode = "400", description = "Date is missing or has an invalid format",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "No checklists found for the date", content = @Content)
+            @ApiResponse(responseCode = "404", description = "No checklists found for the date", content = @Content),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
+                    content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<Checklist>> getChecklistsByDate(
             @Parameter(description = "Date in ISO format (yyyy-MM-dd)", example = "2026-11-07", required = true)
@@ -89,6 +97,8 @@ public class ChecklistController {
             @ApiResponse(responseCode = "400", description = "Invalid ID or completion parameter",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Checklist not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<Checklist> setChecklistCompletion(
@@ -107,6 +117,8 @@ public class ChecklistController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Checklist.class))),
             @ApiResponse(responseCode = "400", description = "Invalid checklist data",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<Checklist> createChecklist(@Valid @RequestBody Checklist checklist) {
@@ -128,9 +140,13 @@ public class ChecklistController {
             @ApiResponse(responseCode = "400", description = "Invalid ID or checklist data",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Checklist not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> updateChecklist(@PathVariable("id") Long checklistId, @RequestBody Checklist checklist) {
+    public ResponseEntity<String> updateChecklist(
+            @PathVariable("id") Long checklistId,
+            @Valid @RequestBody Checklist checklist) {
         checklist.setChecklistId(checklistId);
         checklistService.updateChecklist(checklist);
         return ResponseEntity.ok("Checklist erfolgreich updated");
@@ -146,6 +162,8 @@ public class ChecklistController {
             @ApiResponse(responseCode = "400", description = "Checklist ID is not a number",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Checklist not found",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "A server or database error occurred",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<String> deleteChecklist(@PathVariable("id") Long checklistId) {

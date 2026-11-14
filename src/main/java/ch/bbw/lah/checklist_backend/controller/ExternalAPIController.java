@@ -2,6 +2,7 @@ package ch.bbw.lah.checklist_backend.controller;
 
 import ch.bbw.lah.checklist_backend.model.Train;
 import ch.bbw.lah.checklist_backend.model.Weather;
+import ch.bbw.lah.checklist_backend.model.ForecastSlot;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,8 +96,12 @@ public class ExternalAPIController {
                 .bodyToMono(JsonNode.class)
                 .block();
 
-        JsonNode connection = response.path("connections").path(0);
-        if (connection.isMissingNode()) {
+        return ResponseEntity.ok(parseTrainResponse(response));
+    }
+
+    Train parseTrainResponse(JsonNode response) {
+        JsonNode connection = response == null ? null : response.path("connections").path(0);
+        if (connection == null || connection.isMissingNode() || connection.isNull()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No train connection found");
         }
 
@@ -116,13 +121,11 @@ public class ExternalAPIController {
             delayMinutes = delay.isMissingNode() || delay.isNull() ? null : delay.asInt();
         }
 
-        Train result = new Train(
+        return new Train(
                 departureStation.path("name").asString(null),
                 arrivalStation.path("name").asString(null),
                 departureTime,
                 delayMinutes);
-
-        return ResponseEntity.ok(result);
     }
 
     @CrossOrigin(origins = "${CROSS_ORIGIN}")
@@ -256,8 +259,5 @@ public class ExternalAPIController {
             case 96, 99 -> "Gewitter mit Hagel";
             default -> "Unbekannt";
         };
-    }
-
-    private record ForecastSlot(String period, int hour) {
     }
 }

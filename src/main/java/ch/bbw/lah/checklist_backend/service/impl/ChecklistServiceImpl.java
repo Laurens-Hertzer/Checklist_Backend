@@ -138,7 +138,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         Checklist existingChecklist = checklistRepository.findById(checklist.getChecklistId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Checklist not found"));
         existingChecklist.setTask(checklist.getTask());
-        existingChecklist.setCompleted(checklist.isCompleted());
+        existingChecklist.setCompleted(checklist.getCompleted());
         existingChecklist.setDueDate(checklist.getDueDate());
         existingChecklist.setDeleteAfterDays(checklist.getDeleteAfterDays());
         existingChecklist.setRepeatDays(checklist.getRepeatDays());

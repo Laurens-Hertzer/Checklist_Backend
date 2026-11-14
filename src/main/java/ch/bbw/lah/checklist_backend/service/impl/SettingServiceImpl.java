@@ -34,11 +34,21 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     public Setting updateSetting(Setting setting) {
-        return settingRepository.save(setting);
+        Setting existingSetting = settingRepository.findById(setting.getSettingId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Setting mit ID " + setting.getSettingId() + " nicht gefunden!"));
+        existingSetting.setTrainStarting(setting.getTrainStarting());
+        existingSetting.setTrainDestination(setting.getTrainDestination());
+        existingSetting.setWeatherPlace(setting.getWeatherPlace());
+        return settingRepository.save(existingSetting);
     }
 
     @Override
     public void deleteSetting(Long settingId) {
+        if (!settingRepository.existsById(settingId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Setting mit ID " + settingId + " nicht gefunden!");
+        }
         settingRepository.deleteById(settingId);
     }
 }

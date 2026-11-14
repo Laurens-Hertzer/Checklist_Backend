@@ -2,6 +2,8 @@ package ch.bbw.lah.checklist_backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -27,13 +29,16 @@ public class Checklist {
     private Long checklistId;
 
     @Column(nullable = false, name = "task")
-    @Schema(description = "Checklist task text", example = "Pack lunch",
+    @NotBlank
+    @Schema(description = "Checklist task text; must not be blank", example = "Pack lunch",
             requiredMode = Schema.RequiredMode.REQUIRED)
     private String task;
 
     @Column(nullable = false, name = "completed")
-    @Schema(description = "Whether the task is completed", example = "false")
-    private boolean completed;
+    @NotNull
+    @Schema(description = "Whether the task is completed; required and must not be null", example = "false",
+            requiredMode = Schema.RequiredMode.REQUIRED)
+    private Boolean completed;
 
     @Column(name = "due_date")
     @Schema(description = "Optional due date in ISO format", example = "2026-11-07")
