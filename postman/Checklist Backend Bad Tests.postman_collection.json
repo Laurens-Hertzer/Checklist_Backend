@@ -1,0 +1,633 @@
+{
+  "info": {
+    "_postman_id": "20841ec6-713a-4d80-a673-65d1916ec1f1",
+    "name": "Checklist Backend Bad Tests",
+    "description": "Negative requests for the backend API. Set the baseUrl variable if the server does not run at http://localhost:8080. Requests for collection endpoints without input parameters use an unsupported HTTP method. The train test uses a deliberately unknown station; its response depends on the external timetable API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52671051"
+  },
+  "item": [
+    {
+      "name": "Checklist",
+      "item": [
+        {
+          "name": "Bad Get Checklist by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404 Not Found', function () {\n    pm.response.to.have.status(404);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist/999999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist",
+                "999999999"
+              ]
+            },
+            "description": "Requests a checklist ID that should not exist. Expected: 404 Not Found."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Checklist Aufruf",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 405 Method Not Allowed', function () {\n    pm.response.to.have.status(405);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist"
+              ]
+            },
+            "description": "The collection endpoint has no PATCH operation. Expected: 405 Method Not Allowed."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Get all Checklists by date",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist/date?date=31-12-2026",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist",
+                "date"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "31-12-2026"
+                }
+              ]
+            },
+            "description": "Uses a date that is not in ISO format yyyy-MM-dd. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Put Checklist by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404 Not Found', function () {\n    pm.response.to.have.status(404);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist/999999999/completion?completed=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist",
+                "999999999",
+                "completion"
+              ],
+              "query": [
+                {
+                  "key": "completed",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Attempts to update a checklist that does not exist. Expected: 404 Not Found."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Add Checklist by Delete After Days",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": \"Negative test\",\n  \"completed\": false,\n  \"deleteAfterDays\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist"
+              ]
+            },
+            "description": "deleteAfterDays must be at least 1. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Add Checklist Missing Required Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"task\":\"Missing completed\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist"
+              ]
+            },
+            "description": "Omits the required completed field. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Update Checklist by Delete After Days",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": \"Negative test\",\n  \"completed\": false,\n  \"deleteAfterDays\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist/999999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist",
+                "999999999"
+              ]
+            },
+            "description": "Uses an invalid deletion period. Validation occurs before the missing-ID check. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Delete Checklist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404 Not Found', function () {\n    pm.response.to.have.status(404);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/checklist/999999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checklist",
+                "999999999"
+              ]
+            },
+            "description": "Attempts to delete a checklist that does not exist. Expected: 404 Not Found."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Setting",
+      "item": [
+        {
+          "name": "Bad Get Setting by Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404 Not Found', function () {\n    pm.response.to.have.status(404);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/setting/999999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting",
+                "999999999"
+              ]
+            },
+            "description": "Requests a setting ID that should not exist. Expected: 404 Not Found."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Setting Aufruf",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 405 Method Not Allowed', function () {\n    pm.response.to.have.status(405);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/setting",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting"
+              ]
+            },
+            "description": "The collection endpoint has no PATCH operation. Expected: 405 Method Not Allowed."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Add Setting",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"trainStarting\": ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/setting",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting"
+              ]
+            },
+            "description": "Sends malformed JSON. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Add Setting Missing Required Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"trainStarting\":\"Zurich\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/setting",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting"
+              ]
+            },
+            "description": "Omits required setting fields. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Number Update Setting",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trainStarting\": \"A\",\n  \"trainDestination\": \"B\",\n  \"weatherPlace\": \"C\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/setting/not-a-number",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting",
+                "not-a-number"
+              ]
+            },
+            "description": "Uses a non-numeric setting ID. Expected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Bad Number Delete ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400 Bad Request', function () {\n    pm.response.to.have.status(400);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/setting/not-a-number",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "setting",
+                "not-a-number"
+              ]
+            },
+            "description": "Uses a non-numeric setting ID. Expected: 400 Bad Request. Deleting a numeric ID that does not exist returns 404 Not Found."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Other APIs",
+      "item": [
+        {
+          "name": "Train Bad Station",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404 Not Found when no connection exists', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/train?from=INVALID_STATION_12345&to=INVALID_STATION_67890",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "train"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "INVALID_STATION_12345"
+                },
+                {
+                  "key": "to",
+                  "value": "INVALID_STATION_67890"
+                }
+              ]
+            },
+            "description": "Uses station names that should not exist. Expected: 404 Not Found when the timetable service responds successfully with no connections. If the external service is unavailable, the request can instead return 5xx and the test should fail."
+          },
+          "response": []
+        },
+        {
+          "name": "Weather unsupported Method",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 405 Method Not Allowed', function () {\n    pm.response.to.have.status(405);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "weather"
+              ]
+            },
+            "description": "The weather endpoint only supports GET. Expected: 405 Method Not Allowed."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
