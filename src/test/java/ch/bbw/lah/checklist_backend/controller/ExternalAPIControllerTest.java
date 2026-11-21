@@ -14,10 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ExternalAPIControllerTest {
     private static final LocalDate FORECAST_DATE = LocalDate.of(2026, 11, 13);
 
+    private final ExternalAPIController testee = new ExternalAPIController(
+            "Zurich", "Winterthur", "Zurich, Switzerland", 47.3769, 8.5417);
+
     @Test
     void parsesForecastIntoFourDayPeriods() {
-        var controller = new ExternalAPIController(
-                "Zurich", "Winterthur", "Zurich, Switzerland", 47.3769, 8.5417);
         LocalDate date = FORECAST_DATE;
         String forecastJson = """
                 {
@@ -32,7 +33,7 @@ class ExternalAPIControllerTest {
                 """.formatted(date, date, date, date);
         var response = new ObjectMapper().readTree(forecastJson);
 
-        var forecast = controller.parseForecast(response, date);
+        var forecast = testee.parseForecast(response, date);
 
         assertEquals("Zurich, Switzerland", forecast.location());
         assertEquals(date, forecast.date());
@@ -45,12 +46,9 @@ class ExternalAPIControllerTest {
 
     @Test
     void rejectsForecastWithMissingHourlyData() {
-        var controller = new ExternalAPIController(
-                "Zurich", "Winterthur", "Zurich, Switzerland", 47.3769, 8.5417);
-
         var exception = assertThrows(
                 ResponseStatusException.class,
-                () -> controller.parseForecast(
+                () -> testee.parseForecast(
                         new ObjectMapper().createObjectNode(), FORECAST_DATE));
 
         assertEquals(HttpStatus.BAD_GATEWAY, exception.getStatusCode());
@@ -58,8 +56,6 @@ class ExternalAPIControllerTest {
 
     @Test
     void parsesTrainConnection() {
-        var controller = new ExternalAPIController(
-                "Zurich", "Winterthur", "Zurich, Switzerland", 47.3769, 8.5417);
         var response = new ObjectMapper().readTree("""
                 {
                   "connections": [{
@@ -74,7 +70,7 @@ class ExternalAPIControllerTest {
                 }
                 """);
 
-        Train train = controller.parseTrainResponse(response);
+        Train train = testee.parseTrainResponse(response);
 
         assertEquals("Zürich HB", train.departureStation());
         assertEquals("Winterthur", train.arrivalStation());
@@ -84,15 +80,13 @@ class ExternalAPIControllerTest {
 
     @Test
     void rejectsTrainResponseWithoutConnections() {
-        var controller = new ExternalAPIController(
-                "Zurich", "Winterthur", "Zurich, Switzerland", 47.3769, 8.5417);
         var response = new ObjectMapper().readTree("""
                 {"connections":[]}
                 """);
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> controller.parseTrainResponse(response));
+                () -> testee.parseTrainResponse(response));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
