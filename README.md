@@ -13,7 +13,8 @@ When the backend is running, open Swagger UI at `http://localhost:8080/swagger-u
 
 ### Tests Documentation
 
-The Phase 4 test overview is in [`docs/phase4-testing.md`](docs/phase4-testing.md).
+The Phase 4 test overview is in [`docs/testing.md`](docs/testing.md), and the
+testing process and decisions are documented in [`docs/phase4.md`](docs/phase4.md). Since those both are for my school, they're written in german.
 Run automated tests with `.\mvnw.cmd test`.
 
 ## Postman negative tests
